@@ -1,12 +1,16 @@
 const { Console } = require('console')
 const http = require('http')
+const { getProducts, getProduct } = require('./controllers/productController')
 const products = require('./data/products')
 
 const server = http.createServer((req, res) => {
     if (req.url === '/api/products' && req.method === 'GET') {
-        res.writeHead(200, { "Content-Type": 'application/json' })
-        res.end(JSON.stringify(products))
-    } else {
+        getProducts(req, res)
+    } else if (req.url.match(/\/api\/products\/([0-9]+)/) && req.method === 'GET') {
+        const id = req.url.split('/')[3]
+        getProduct(req, res, id)
+    }
+    else {
         res.writeHead(404, { "Content-Type": 'application/json' })
         res.end(JSON.stringify({ message: 'route note found' }))
     }
